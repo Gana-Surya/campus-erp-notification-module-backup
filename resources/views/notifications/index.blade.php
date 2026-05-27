@@ -10,6 +10,7 @@
 
     <title>Notifications</title>
 
+    {{-- Tailwind CSS via Vite --}}
     @vite(['resources/css/app.css'])
 
 </head>
@@ -18,10 +19,12 @@
 
     <div class="max-w-4xl mx-auto">
 
+        {{-- Page Heading --}}
         <h1 class="text-3xl font-bold mb-6">
             Notification Dashboard
         </h1>
 
+        {{-- Success Message --}}
         @if(session('success'))
 
             <div class="bg-green-500 text-white p-3 rounded mb-5">
@@ -32,6 +35,7 @@
 
         @endif
 
+        {{-- Notification Form Card --}}
         <div class="bg-white p-6 rounded shadow mb-8">
 
             <form method="POST"
@@ -39,10 +43,13 @@
 
                 @csrf
 
+                {{-- Recipient Email --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
+
                         Recipient Email
+
                     </label>
 
                     <input type="email"
@@ -63,15 +70,51 @@
 
                 </div>
 
+                {{-- Template Dropdown --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
-                        Message
+
+                        Select Template
+
                     </label>
 
-                    <textarea name="message"
-                              rows="4"
-                              class="w-full border p-2 rounded"
+                    <select id="templateSelect"
+                            class="w-full border p-2 rounded">
+
+                        <option value="">
+
+                            -- Choose Template --
+
+                        </option>
+
+                        @foreach($templates as $template)
+
+                            <option value="{{ $template->message }}">
+
+                                {{ $template->name }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                {{-- Message Textarea --}}
+                <div class="mb-4">
+
+                    <label class="block mb-2 font-semibold">
+
+                        Message
+
+                    </label>
+
+                    <textarea id="messageBox"
+                              name="message"
+                              rows="5"
+                              class="w-full border p-3 rounded"
                               required>{{ old('message') }}</textarea>
 
                     @error('message')
@@ -86,12 +129,14 @@
 
                 </div>
 
+                {{-- Hidden Notification Type --}}
                 <input type="hidden"
                        name="type"
                        value="EMAIL">
 
+                {{-- Submit Button --}}
                 <button type="submit"
-                        class="bg-blue-600 text-white px-5 py-2 rounded">
+                        class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">
 
                     Send Notification
 
@@ -101,6 +146,7 @@
 
         </div>
 
+        {{-- Notification History --}}
         <div class="bg-white p-6 rounded shadow">
 
             <h2 class="text-2xl font-bold mb-4">
@@ -116,19 +162,27 @@
                     <tr class="bg-gray-200">
 
                         <th class="border p-2 text-left">
+
                             Recipient
+
                         </th>
 
                         <th class="border p-2 text-left">
+
                             Message
+
                         </th>
 
                         <th class="border p-2 text-left">
+
                             Status
+
                         </th>
 
                         <th class="border p-2 text-left">
+
                             Sent At
+
                         </th>
 
                     </tr>
@@ -141,48 +195,52 @@
 
                         <tr>
 
+                            {{-- Recipient --}}
                             <td class="border p-2">
 
                                 {{ $notification->recipient }}
 
                             </td>
 
+                            {{-- Message --}}
                             <td class="border p-2">
 
                                 {{ $notification->message }}
 
                             </td>
 
+                            {{-- Status Badge --}}
                             <td class="border p-2">
 
-    @if($notification->status === 'SENT')
+                                @if($notification->status === 'SENT')
 
-        <span class="bg-green-500 text-white px-2 py-1 rounded text-sm">
+                                    <span class="bg-green-500 text-white px-2 py-1 rounded text-sm">
 
-            SENT
+                                        SENT
 
-        </span>
+                                    </span>
 
-    @elseif($notification->status === 'FAILED')
+                                @elseif($notification->status === 'FAILED')
 
-        <span class="bg-red-500 text-white px-2 py-1 rounded text-sm">
+                                    <span class="bg-red-500 text-white px-2 py-1 rounded text-sm">
 
-            FAILED
+                                        FAILED
 
-        </span>
+                                    </span>
 
-    @else
+                                @else
 
-        <span class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">
+                                    <span class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">
 
-            PENDING
+                                        PENDING
 
-        </span>
+                                    </span>
 
-    @endif
+                                @endif
 
-</td>
+                            </td>
 
+                            {{-- Created Time --}}
                             <td class="border p-2">
 
                                 {{ $notification->created_at }}
@@ -193,6 +251,7 @@
 
                     @empty
 
+                        {{-- Empty State --}}
                         <tr>
 
                             <td colspan="4"
@@ -213,6 +272,26 @@
         </div>
 
     </div>
+
+    {{-- Auto-fill Message from Selected Template --}}
+    <script>
+
+        const templateSelect =
+            document.getElementById('templateSelect');
+
+        const messageBox =
+            document.getElementById('messageBox');
+
+        templateSelect.addEventListener(
+            'change',
+            function () {
+
+                messageBox.value = this.value;
+
+            }
+        );
+
+    </script>
 
 </body>
 

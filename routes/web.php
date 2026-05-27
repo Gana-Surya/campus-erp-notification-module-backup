@@ -4,6 +4,7 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\ProfileController;
 
 use App\Models\Notification;
+use App\Models\NotificationTemplate;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -72,9 +73,14 @@ Route::get('/notifications', function () {
 
     $notifications = Notification::latest()->get();
 
+    $templates = NotificationTemplate::all();
+
     return view(
         'notifications.index',
-        compact('notifications')
+        compact(
+            'notifications',
+            'templates'
+        )
     );
 
 })->middleware('auth');
