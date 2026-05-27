@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Notification;
 
 use App\Http\Controllers\Controller;
+
 use App\Http\Requests\Notification\StoreNotificationRequest;
+
 use App\Services\Notification\NotificationService;
 
 class NotificationController extends Controller
@@ -20,20 +22,19 @@ class NotificationController extends Controller
         StoreNotificationRequest $request
     ) {
 
-        $this->notificationService->createLog([
-
-            'type' => $request->type,
+        $this->notificationService->sendEmail([
 
             'recipient' => $request->recipient,
 
-            'message' => $request->message,
+            'title' => 'Campus ERP Notification',
 
-            'status' => 'SENT'
+            'message' => $request->message
+
         ]);
 
         return back()->with(
             'success',
-            'Notification logged successfully.'
+            'Notification sent successfully.'
         );
     }
 }

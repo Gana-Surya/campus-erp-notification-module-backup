@@ -6,13 +6,31 @@ use App\Models\Notification;
 
 class NotificationService
 {
-    public function createLog(array $data)
+    protected $emailService;
+
+    public function __construct(
+        EmailService $emailService
+    ) {
+        $this->emailService = $emailService;
+    }
+
+    public function sendEmail(array $data)
     {
+
+        $this->emailService->send(
+
+            $data['recipient'],
+
+            $data['title'] ?? 'Campus ERP Notification',
+
+            $data['message']
+        );
+
         return Notification::create([
 
             'user_id' => $data['user_id'] ?? null,
 
-            'type' => $data['type'],
+            'type' => 'EMAIL',
 
             'title' => $data['title'] ?? null,
 
@@ -20,7 +38,7 @@ class NotificationService
 
             'recipient' => $data['recipient'],
 
-            'status' => $data['status'],
+            'status' => 'SENT',
 
             'sent_at' => now()
         ]);

@@ -55,3 +55,19 @@ Route::get('/test-email', function () {
 });
 
 require __DIR__.'/auth.php';
+Route::get('/send-test-notification', function () {
+
+    app(
+        \App\Services\Notification\NotificationService::class
+    )->sendEmail([
+
+        'recipient' => 'suryahero2004@gmail.com',
+
+        'title' => 'ERP Service Test',
+
+        'message' => 'NotificationService is working properly.'
+
+    ]);
+
+    return 'Notification sent successfully.';
+});
