@@ -3,18 +3,42 @@
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\ProfileController;
 
+use App\Models\Notification;
+
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
+
     return view('welcome');
+
 });
 
+/*
+|--------------------------------------------------------------------------
+| Dashboard Route
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/dashboard', function () {
+
     return view('dashboard');
+
 })
 ->middleware(['auth', 'verified'])
 ->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Profile Management Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
 
@@ -34,10 +58,52 @@ Route::middleware('auth')->group(function () {
     )->name('profile.destroy');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Notification Dashboard Routes
+|--------------------------------------------------------------------------
+|
+| Protected using authentication middleware.
+| Only logged-in users can access notification features.
+|
+*/
+
+Route::get('/notifications', function () {
+
+    $notifications = Notification::latest()->get();
+
+    return view(
+        'notifications.index',
+        compact('notifications')
+    );
+
+})->middleware('auth');
+
 Route::post(
     '/notifications',
     [NotificationController::class, 'store']
-);
+)->middleware('auth');
+
+/*
+|--------------------------------------------------------------------------
+| TEMPORARY TESTING ROUTES
+|--------------------------------------------------------------------------
+|
+| These routes were used during development for:
+| - Gmail SMTP testing
+| - NotificationService verification
+| - End-to-end email workflow testing
+|
+| Keep for demonstration/testing purposes.
+| Remove or secure before production deployment.
+|
+*/
+
+/*
+|--------------------------------------------------------------------------
+| SMTP Email Testing Route
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/test-email', function () {
 
@@ -54,7 +120,12 @@ Route::get('/test-email', function () {
     return 'Test email sent successfully.';
 });
 
-require __DIR__.'/auth.php';
+/*
+|--------------------------------------------------------------------------
+| NotificationService Testing Route
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/send-test-notification', function () {
 
     app(
@@ -71,3 +142,11 @@ Route::get('/send-test-notification', function () {
 
     return 'Notification sent successfully.';
 });
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+
+require __DIR__.'/auth.php';
