@@ -10,7 +10,6 @@
 
     <title>Notifications</title>
 
-    {{-- Tailwind CSS via Vite --}}
     @vite(['resources/css/app.css'])
 
 </head>
@@ -19,12 +18,10 @@
 
     <div class="max-w-4xl mx-auto">
 
-        {{-- Page Heading --}}
         <h1 class="text-3xl font-bold mb-6">
             Notification Dashboard
         </h1>
 
-        {{-- Success Message --}}
         @if(session('success'))
 
             <div class="bg-green-500 text-white p-3 rounded mb-5">
@@ -35,7 +32,7 @@
 
         @endif
 
-        {{-- Notification Form Card --}}
+        {{-- Notification Form --}}
         <div class="bg-white p-6 rounded shadow mb-8">
 
             <form method="POST"
@@ -43,16 +40,16 @@
 
                 @csrf
 
-                {{-- Recipient Email --}}
+                {{-- Recipient --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
 
-                        Recipient Email
+                        Recipient
 
                     </label>
 
-                    <input type="email"
+                    <input type="text"
                            name="recipient"
                            value="{{ old('recipient') }}"
                            class="w-full border p-2 rounded"
@@ -67,6 +64,41 @@
                         </p>
 
                     @enderror
+
+                </div>
+
+                {{-- Notification Type --}}
+                <div class="mb-4">
+
+                    <label class="block mb-2 font-semibold">
+
+                        Notification Type
+
+                    </label>
+
+                    <select name="type"
+                            class="w-full border p-2 rounded"
+                            required>
+
+                        <option value="EMAIL">
+
+                            EMAIL
+
+                        </option>
+
+                        <option value="SMS">
+
+                            SMS
+
+                        </option>
+
+                        <option value="WHATSAPP">
+
+                            WHATSAPP
+
+                        </option>
+
+                    </select>
 
                 </div>
 
@@ -102,7 +134,7 @@
 
                 </div>
 
-                {{-- Message Textarea --}}
+                {{-- Message --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -129,12 +161,6 @@
 
                 </div>
 
-                {{-- Hidden Notification Type --}}
-                <input type="hidden"
-                       name="type"
-                       value="EMAIL">
-
-                {{-- Submit Button --}}
                 <button type="submit"
                         class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition">
 
@@ -169,6 +195,12 @@
 
                         <th class="border p-2 text-left">
 
+                            Type
+
+                        </th>
+
+                        <th class="border p-2 text-left">
+
                             Message
 
                         </th>
@@ -195,21 +227,24 @@
 
                         <tr>
 
-                            {{-- Recipient --}}
                             <td class="border p-2">
 
                                 {{ $notification->recipient }}
 
                             </td>
 
-                            {{-- Message --}}
+                            <td class="border p-2">
+
+                                {{ $notification->type }}
+
+                            </td>
+
                             <td class="border p-2">
 
                                 {{ $notification->message }}
 
                             </td>
 
-                            {{-- Status Badge --}}
                             <td class="border p-2">
 
                                 @if($notification->status === 'SENT')
@@ -240,7 +275,6 @@
 
                             </td>
 
-                            {{-- Created Time --}}
                             <td class="border p-2">
 
                                 {{ $notification->created_at }}
@@ -251,10 +285,9 @@
 
                     @empty
 
-                        {{-- Empty State --}}
                         <tr>
 
-                            <td colspan="4"
+                            <td colspan="5"
                                 class="border p-4 text-center">
 
                                 No notifications found.
@@ -273,7 +306,6 @@
 
     </div>
 
-    {{-- Auto-fill Message from Selected Template --}}
     <script>
 
         const templateSelect =
