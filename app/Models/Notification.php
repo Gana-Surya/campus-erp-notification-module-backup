@@ -20,6 +20,8 @@ class Notification extends Model
 
         'status',
 
+        'response',
+
         'sent_at'
     ];
 }
