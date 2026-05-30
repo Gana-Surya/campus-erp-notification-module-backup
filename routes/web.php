@@ -1,11 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-
 use App\Http\Controllers\Staff\StaffController;
-
 use App\Http\Controllers\Staff\AttendanceController;
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,9 +35,6 @@ Route::get('/dashboard', function () {
 |--------------------------------------------------------------------------
 | Profile Management Routes
 |--------------------------------------------------------------------------
-|
-| Authenticated users can manage their profile.
-|
 */
 
 Route::middleware('auth')->group(function () {
@@ -65,10 +59,6 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 | Staff Management Routes
 |--------------------------------------------------------------------------
-|
-| Protected using authentication middleware.
-| Only logged-in users can access staff management.
-|
 */
 
 Route::get(
@@ -81,13 +71,25 @@ Route::post(
     [StaffController::class, 'store']
 )->middleware('auth');
 
+Route::get(
+    '/staff/{staff}/edit',
+    [StaffController::class, 'edit']
+)->middleware('auth');
+
+Route::put(
+    '/staff/{staff}',
+    [StaffController::class, 'update']
+)->middleware('auth');
+
+Route::delete(
+    '/staff/{staff}',
+    [StaffController::class, 'destroy']
+)->middleware('auth');
+
 /*
 |--------------------------------------------------------------------------
 | Staff Attendance Routes
 |--------------------------------------------------------------------------
-|
-| Attendance management routes protected using authentication.
-|
 */
 
 Route::get(

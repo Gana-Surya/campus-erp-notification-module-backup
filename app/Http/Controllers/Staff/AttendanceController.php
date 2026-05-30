@@ -3,43 +3,84 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
-
 use App\Models\Staff;
-
 use App\Models\StaffAttendance;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display attendance dashboard
-     */
     public function index()
     {
-        // Get all staff members
         $staff = Staff::latest()->get();
 
-        // Get attendance history
         $attendanceRecords = StaffAttendance::with('staff')
             ->latest()
             ->get();
+
+        $today = date('Y-m-d');
+
+        $totalStaff = Staff::count();
+
+        $presentToday = StaffAttendance::where(
+            'date',
+            $today
+        )
+        ->where(
+            'status',
+            'PRESENT'
+        )
+        ->count();
+
+        $absentToday = StaffAttendance::where(
+            'date',
+            $today
+        )
+        ->where(
+            'status',
+            'ABSENT'
+        )
+        ->count();
+
+        $holidayToday = StaffAttendance::where(
+            'date',
+            $today
+        )
+        ->where(
+            'status',
+            'HOLIDAY'
+        )
+        ->count();
+
+        $attendancePercentage =
+            $totalStaff > 0
+                ? round(
+                    ($presentToday / $totalStaff) * 100,
+                    2
+                )
+                : 0;
+
+        $monthlyReport = Staff::with('attendance')->get();
+
+        $salaryReport = Staff::with('attendance')->get();
 
         return view(
             'staff.attendance',
             compact(
                 'staff',
-                'attendanceRecords'
+                'attendanceRecords',
+                'totalStaff',
+                'presentToday',
+                'absentToday',
+                'holidayToday',
+                'attendancePercentage',
+                'monthlyReport',
+                'salaryReport'
             )
         );
     }
 
-    /**
-     * Store attendance record
-     */
     public function store(Request $request)
     {
-        // Validate attendance form
         $request->validate([
 
             'staff_id' => [
@@ -58,7 +99,6 @@ class AttendanceController extends Controller
             ]
         ]);
 
-        // Create attendance record
         StaffAttendance::create([
 
             'staff_id' => $request->staff_id,
@@ -74,3 +114,4 @@ class AttendanceController extends Controller
         );
     }
 }
+?>

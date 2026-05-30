@@ -10,7 +10,6 @@
 
     <title>Staff Management</title>
 
-    {{-- Tailwind CSS --}}
     @vite(['resources/css/app.css'])
 
 </head>
@@ -19,14 +18,12 @@
 
     <div class="max-w-6xl mx-auto">
 
-        {{-- Page Heading --}}
         <h1 class="text-3xl font-bold mb-6">
 
             Staff Management Dashboard
 
         </h1>
 
-        {{-- Success Message --}}
         @if(session('success'))
 
             <div class="bg-green-500 text-white p-3 rounded mb-5">
@@ -37,7 +34,6 @@
 
         @endif
 
-        {{-- Add Staff Form --}}
         <div class="bg-white p-6 rounded shadow mb-8">
 
             <form method="POST"
@@ -45,7 +41,6 @@
 
                 @csrf
 
-                {{-- Staff Name --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -60,19 +55,8 @@
                            class="w-full border p-2 rounded"
                            required>
 
-                    @error('name')
-
-                        <p class="text-red-500 mt-1">
-
-                            {{ $message }}
-
-                        </p>
-
-                    @enderror
-
                 </div>
 
-                {{-- Staff Type --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -85,11 +69,7 @@
                             class="w-full border p-2 rounded"
                             required>
 
-                        <option value="">
-
-                            -- Select Type --
-
-                        </option>
+                        <option value="">-- Select Type --</option>
 
                         <option value="TEACHING">
 
@@ -107,7 +87,6 @@
 
                 </div>
 
-                {{-- Subject --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -122,7 +101,6 @@
 
                 </div>
 
-                {{-- Role --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -137,7 +115,6 @@
 
                 </div>
 
-                {{-- Salary --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -154,7 +131,6 @@
 
                 </div>
 
-                {{-- Email --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -169,7 +145,6 @@
 
                 </div>
 
-                {{-- Phone --}}
                 <div class="mb-4">
 
                     <label class="block mb-2 font-semibold">
@@ -184,7 +159,6 @@
 
                 </div>
 
-                {{-- Submit Button --}}
                 <button type="submit"
                         class="bg-blue-600 text-white px-5 py-2 rounded">
 
@@ -196,47 +170,46 @@
 
         </div>
 
-        {{-- Staff List --}}
         <div class="bg-white p-6 rounded shadow">
 
             <h2 class="text-2xl font-bold mb-4">
 
-    Staff List
+                Staff List
 
-</h2>
+            </h2>
 
-<form method="GET"
-      action="/staff"
-      class="mb-4">
+            <form method="GET"
+                  action="/staff"
+                  class="mb-4">
 
-    <div class="flex gap-2">
+                <div class="flex gap-2">
 
-        <input
-            type="text"
-            name="search"
-            value="{{ $search ?? '' }}"
-            placeholder="Search by name, email or type"
-            class="border p-2 rounded w-80">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ $search ?? '' }}"
+                        placeholder="Search by name, email or type"
+                        class="border p-2 rounded w-80">
 
-        <button
-    type="submit"
-    class="bg-blue-600 text-white px-4 py-2 rounded">
+                    <button
+                        type="submit"
+                        class="bg-blue-600 text-white px-4 py-2 rounded">
 
-    Search
+                        Search
 
-</button>
+                    </button>
 
-<a
-    href="/staff"
-    class="bg-gray-500 text-white px-4 py-2 rounded">
+                    <a
+                        href="/staff"
+                        class="bg-gray-500 text-white px-4 py-2 rounded">
 
-    Clear
+                        Clear
 
-</a>
+                    </a>
 
-    </div>
+                </div>
 
-</form>
+            </form>
 
             <table class="w-full border-collapse">
 
@@ -253,7 +226,11 @@
                         </th>
 
                         <th class="border p-2 text-left">
-                            Subject / Role
+                            Subject
+                        </th>
+
+                        <th class="border p-2 text-left">
+                            Role
                         </th>
 
                         <th class="border p-2 text-left">
@@ -262,6 +239,10 @@
 
                         <th class="border p-2 text-left">
                             Email
+                        </th>
+
+                        <th class="border p-2 text-left">
+                            Action
                         </th>
 
                     </tr>
@@ -288,7 +269,13 @@
 
                             <td class="border p-2">
 
-                                {{ $member->subject ?? $member->role }}
+                                {{ $member->subject ?: '-' }}
+
+                            </td>
+
+                            <td class="border p-2">
+
+                                {{ $member->role ?: '-' }}
 
                             </td>
 
@@ -304,13 +291,46 @@
 
                             </td>
 
+                            <td class="border p-2">
+
+    <div class="flex gap-2">
+
+        <a href="/staff/{{ $member->id }}/edit"
+           class="bg-yellow-500 text-white px-3 py-1 rounded">
+
+            Edit
+
+        </a>
+
+        <form method="POST"
+              action="/staff/{{ $member->id }}">
+
+            @csrf
+
+            @method('DELETE')
+
+            <button
+                type="submit"
+                onclick="return confirm('Are you sure?')"
+                class="bg-red-600 text-white px-3 py-1 rounded">
+
+                Delete
+
+            </button>
+
+        </form>
+
+    </div>
+
+</td>
+
                         </tr>
 
                     @empty
 
                         <tr>
 
-                            <td colspan="5"
+                            <td colspan="7"
                                 class="border p-4 text-center">
 
                                 No staff records found.

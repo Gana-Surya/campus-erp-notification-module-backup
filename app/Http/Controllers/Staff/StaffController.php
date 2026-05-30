@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StoreStaffRequest;
 use App\Models\Staff;
+use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
-    /**
-     * Display staff listing
-     */
     public function index()
     {
         $search = request('search');
@@ -70,9 +68,6 @@ class StaffController extends Controller
         );
     }
 
-    /**
-     * Store new staff member
-     */
     public function store(
         StoreStaffRequest $request
     ) {
@@ -97,6 +92,55 @@ class StaffController extends Controller
         return back()->with(
             'success',
             'Staff member added successfully.'
+        );
+    }
+
+    public function edit(
+        Staff $staff
+    ) {
+        return view(
+            'staff.edit',
+            compact('staff')
+        );
+    }
+
+    public function update(
+        StoreStaffRequest $request,
+        Staff $staff
+    ) {
+
+        $staff->update([
+
+            'name' => $request->name,
+
+            'type' => $request->type,
+
+            'subject' => $request->subject,
+
+            'role' => $request->role,
+
+            'salary' => $request->salary,
+
+            'email' => $request->email,
+
+            'phone' => $request->phone
+        ]);
+
+        return redirect('/staff')->with(
+            'success',
+            'Staff member updated successfully.'
+        );
+    }
+
+    public function destroy(
+        Staff $staff
+    ) {
+
+        $staff->delete();
+
+        return redirect('/staff')->with(
+            'success',
+            'Staff member deleted successfully.'
         );
     }
 }
