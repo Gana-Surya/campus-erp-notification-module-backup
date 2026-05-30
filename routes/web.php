@@ -71,15 +71,69 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/notifications', function () {
 
-    $notifications = Notification::latest()->get();
+    $type = request('type');
+
+    $notifications = Notification::query();
+
+    // Filter notifications by type
+    if ($type && $type !== 'ALL') {
+
+        $notifications->where(
+            'type',
+            $type
+        );
+    }
+
+    $notifications = $notifications
+        ->latest()
+        ->get();
 
     $templates = NotificationTemplate::all();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Statistics
+    |--------------------------------------------------------------------------
+    */
+
+    $totalNotifications =
+        Notification::count();
+
+    $emailCount =
+        Notification::where(
+            'type',
+            'EMAIL'
+        )->count();
+
+    $smsCount =
+        Notification::where(
+            'type',
+            'SMS'
+        )->count();
+
+    $whatsappCount =
+        Notification::where(
+            'type',
+            'WHATSAPP'
+        )->count();
+
+    $failedCount =
+        Notification::where(
+            'status',
+            'FAILED'
+        )->count();
 
     return view(
         'notifications.index',
         compact(
             'notifications',
-            'templates'
+            'templates',
+            'type',
+            'totalNotifications',
+            'emailCount',
+            'smsCount',
+            'whatsappCount',
+            'failedCount'
         )
     );
 
