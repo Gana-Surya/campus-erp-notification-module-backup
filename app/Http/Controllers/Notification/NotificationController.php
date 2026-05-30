@@ -23,42 +23,62 @@ class NotificationController extends Controller
         StoreNotificationRequest $request
     ) {
 
-        $data = [
+        /*
+        |--------------------------------------------------------------------------
+        | Bulk Notification Support
+        |--------------------------------------------------------------------------
+        |
+        | Example:
+        | abc@gmail.com,xyz@gmail.com,test@gmail.com
+        |
+        */
 
-            'recipient' => $request->recipient,
+        $recipients = explode(
+            ',',
+            $request->recipient
+        );
 
-            'title' => 'Campus ERP Notification',
+        foreach ($recipients as $recipient) {
 
-            'message' => $request->message
-        ];
+            $recipient = trim($recipient);
 
-        switch ($request->type) {
+            $data = [
 
-            case 'SMS':
+                'recipient' => $recipient,
 
-                $this->notificationService
-                    ->sendSms($data);
+                'title' => 'Campus ERP Notification',
 
-                break;
+                'message' => $request->message
+            ];
 
-            case 'WHATSAPP':
+            switch ($request->type) {
 
-                $this->notificationService
-                    ->sendWhatsapp($data);
+                case 'SMS':
 
-                break;
+                    $this->notificationService
+                        ->sendSms($data);
 
-            default:
+                    break;
 
-                $this->notificationService
-                    ->sendEmail($data);
+                case 'WHATSAPP':
 
-                break;
+                    $this->notificationService
+                        ->sendWhatsapp($data);
+
+                    break;
+
+                default:
+
+                    $this->notificationService
+                        ->sendEmail($data);
+
+                    break;
+            }
         }
 
         return back()->with(
             'success',
-            'Notification sent successfully.'
+            'Bulk notification sent successfully.'
         );
     }
 }
