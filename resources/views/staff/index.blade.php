@@ -201,9 +201,42 @@
 
             <h2 class="text-2xl font-bold mb-4">
 
-                Staff List
+    Staff List
 
-            </h2>
+</h2>
+
+<form method="GET"
+      action="/staff"
+      class="mb-4">
+
+    <div class="flex gap-2">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ $search ?? '' }}"
+            placeholder="Search by name, email or type"
+            class="border p-2 rounded w-80">
+
+        <button
+    type="submit"
+    class="bg-blue-600 text-white px-4 py-2 rounded">
+
+    Search
+
+</button>
+
+<a
+    href="/staff"
+    class="bg-gray-500 text-white px-4 py-2 rounded">
+
+    Clear
+
+</a>
+
+    </div>
+
+</form>
 
             <table class="w-full border-collapse">
 
