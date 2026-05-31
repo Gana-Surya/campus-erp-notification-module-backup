@@ -37,6 +37,15 @@
         </div>
 
     @endif
+    @if(session('error'))
+
+    <div class="bg-red-500 text-white p-3 rounded mb-5">
+
+        {{ session('error') }}
+
+    </div>
+
+@endif
 
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
 
