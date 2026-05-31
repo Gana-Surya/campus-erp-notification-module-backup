@@ -1,16 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>Student Attendance</title>
+<title>Student Attendance</title>
 
-    @vite(['resources/css/app.css'])
+@vite(['resources/css/app.css'])
+```
 
 </head>
 
@@ -18,242 +21,371 @@
 
 <div class="max-w-7xl mx-auto">
 
-    {{-- Page Heading --}}
-    <h1 class="text-3xl font-bold mb-6">
+```
+<h1 class="text-3xl font-bold mb-6">
 
-        Student Attendance Dashboard
+    Student Attendance Dashboard
 
-    </h1>
+</h1>
 
-    {{-- Success Message --}}
-    @if(session('success'))
+@if(session('success'))
 
-        <div class="bg-green-500 text-white p-3 rounded mb-5">
+    <div class="bg-green-500 text-white p-3 rounded mb-5">
 
-            {{ session('success') }}
+        {{ session('success') }}
+
+    </div>
+
+@endif
+
+@if(session('error'))
+
+    <div class="bg-red-500 text-white p-3 rounded mb-5">
+
+        {{ session('error') }}
+
+    </div>
+
+@endif
+
+<div class="grid grid-cols-5 gap-4 mb-8">
+
+    <div class="bg-blue-500 text-white p-5 rounded">
+
+        <h3 class="font-bold">
+            Total Students
+        </h3>
+
+        <p class="text-3xl font-bold">
+            {{ $totalStudents }}
+        </p>
+
+    </div>
+
+    <div class="bg-green-500 text-white p-5 rounded">
+
+        <h3 class="font-bold">
+            Present Today
+        </h3>
+
+        <p class="text-3xl font-bold">
+            {{ $presentToday }}
+        </p>
+
+    </div>
+
+    <div class="bg-red-500 text-white p-5 rounded">
+
+        <h3 class="font-bold">
+            Absent Today
+        </h3>
+
+        <p class="text-3xl font-bold">
+            {{ $absentToday }}
+        </p>
+
+    </div>
+
+    <div class="bg-yellow-500 text-white p-5 rounded">
+
+        <h3 class="font-bold">
+            Holiday Today
+        </h3>
+
+        <p class="text-3xl font-bold">
+            {{ $holidayToday }}
+        </p>
+
+    </div>
+
+    <div class="bg-purple-500 text-white p-5 rounded">
+
+        <h3 class="font-bold">
+            Attendance %
+        </h3>
+
+        <p class="text-3xl font-bold">
+            {{ $attendancePercentage }}%
+        </p>
+
+    </div>
+
+</div>
+
+<div class="bg-white p-6 rounded shadow mb-8">
+
+    <form method="POST"
+          action="/students/attendance">
+
+        @csrf
+
+        <div class="mb-4">
+
+            <label class="block mb-2 font-semibold">
+
+                Select Student
+
+            </label>
+
+            <select name="student_id"
+                    class="w-full border p-2 rounded"
+                    required>
+
+                <option value="">
+                    -- Select Student --
+                </option>
+
+                @foreach($students as $student)
+
+                    <option value="{{ $student->id }}">
+
+                        {{ $student->admission_number }}
+                        -
+                        {{ $student->name }}
+
+                    </option>
+
+                @endforeach
+
+            </select>
 
         </div>
 
-    @endif
+        <div class="mb-4">
 
-    {{-- Attendance Form --}}
-    <div class="bg-white p-6 rounded shadow mb-8">
+            <label class="block mb-2 font-semibold">
 
-        <form method="POST"
-              action="/students/attendance">
+                Attendance Date
 
-            @csrf
+            </label>
 
-            {{-- Student --}}
-            <div class="mb-4">
+            <input type="date"
+                   name="date"
+                   class="w-full border p-2 rounded"
+                   required>
 
-                <label class="block mb-2 font-semibold">
+        </div>
 
-                    Select Student
+        <div class="mb-4">
 
-                </label>
+            <label class="block mb-2 font-semibold">
 
-                <select name="student_id"
-                        class="w-full border p-2 rounded"
-                        required>
+                Attendance Status
 
-                    <option value="">
-                        -- Select Student --
-                    </option>
+            </label>
 
-                    @foreach($students as $student)
+            <select name="status"
+                    class="w-full border p-2 rounded"
+                    required>
 
-                        <option value="{{ $student->id }}">
+                <option value="PRESENT">
+                    PRESENT
+                </option>
 
-                            {{ $student->admission_number }}
-                            -
-                            {{ $student->name }}
+                <option value="ABSENT">
+                    ABSENT
+                </option>
 
-                        </option>
+                <option value="HOLIDAY">
+                    HOLIDAY
+                </option>
 
-                    @endforeach
+            </select>
 
-                </select>
+        </div>
 
-            </div>
+        <button type="submit"
+                class="bg-blue-600 text-white px-5 py-2 rounded">
 
-            {{-- Attendance Date --}}
-            <div class="mb-4">
+            Mark Attendance
 
-                <label class="block mb-2 font-semibold">
+        </button>
 
-                    Attendance Date
+    </form>
 
-                </label>
+</div>
 
-                <input type="date"
-                       name="date"
-                       class="w-full border p-2 rounded"
-                       required>
+<div class="bg-white p-6 rounded shadow">
 
-            </div>
+    <h2 class="text-2xl font-bold mb-4">
 
-            {{-- Attendance Status --}}
-            <div class="mb-4">
+        Attendance History
 
-                <label class="block mb-2 font-semibold">
+    </h2>
 
-                    Attendance Status
+    <table class="w-full border-collapse">
 
-                </label>
+        <thead>
 
-                <select name="status"
-                        class="w-full border p-2 rounded"
-                        required>
+            <tr class="bg-gray-200">
 
-                    <option value="PRESENT">
-                        PRESENT
-                    </option>
+                <th class="border p-2">
+                    Admission No
+                </th>
 
-                    <option value="ABSENT">
-                        ABSENT
-                    </option>
+                <th class="border p-2">
+                    Student Name
+                </th>
 
-                    <option value="HOLIDAY">
-                        HOLIDAY
-                    </option>
+                <th class="border p-2">
+                    Course
+                </th>
 
-                </select>
+                <th class="border p-2">
+                    Date
+                </th>
 
-            </div>
+                <th class="border p-2">
+                    Status
+                </th>
 
-            <button type="submit"
-                    class="bg-blue-600 text-white px-5 py-2 rounded">
+            </tr>
 
-                Mark Attendance
+        </thead>
 
-            </button>
+        <tbody>
 
-        </form>
+            @forelse($attendanceRecords as $record)
 
-    </div>
+                <tr>
 
-    {{-- Attendance History --}}
-    <div class="bg-white p-6 rounded shadow">
+                    <td class="border p-2">
 
-        <h2 class="text-2xl font-bold mb-4">
+                        {{ $record->student->admission_number }}
 
-            Attendance History
+                    </td>
 
-        </h2>
+                    <td class="border p-2">
 
-        <table class="w-full border-collapse">
+                        {{ $record->student->name }}
 
-            <thead>
+                    </td>
 
-                <tr class="bg-gray-200">
+                    <td class="border p-2">
 
-                    <th class="border p-2">
-                        Admission No
-                    </th>
+                        {{ $record->student->course }}
 
-                    <th class="border p-2">
-                        Student Name
-                    </th>
+                    </td>
 
-                    <th class="border p-2">
-                        Course
-                    </th>
+                    <td class="border p-2">
 
-                    <th class="border p-2">
-                        Date
-                    </th>
+                        {{ $record->date }}
 
-                    <th class="border p-2">
-                        Status
-                    </th>
+                    </td>
+
+                    <td class="border p-2">
+
+                        @if($record->status === 'PRESENT')
+
+                            <span class="bg-green-500 text-white px-3 py-1 rounded">
+                                PRESENT
+                            </span>
+
+                        @elseif($record->status === 'ABSENT')
+
+                            <span class="bg-red-500 text-white px-3 py-1 rounded">
+                                ABSENT
+                            </span>
+
+                        @else
+
+                            <span class="bg-yellow-500 text-white px-3 py-1 rounded">
+                                HOLIDAY
+                            </span>
+
+                        @endif
+
+                    </td>
 
                 </tr>
 
-            </thead>
+            @empty
 
-            <tbody>
+                <tr>
 
-                @forelse($attendanceRecords as $record)
+                    <td colspan="5"
+                        class="border p-4 text-center">
 
-                    <tr>
+                        No attendance records found.
 
-                        <td class="border p-2">
+                    </td>
 
-                            {{ $record->student->admission_number }}
+                </tr>
 
-                        </td>
+            @endforelse
 
-                        <td class="border p-2">
+        </tbody>
 
-                            {{ $record->student->name }}
+    </table>
 
-                        </td>
+</div>
 
-                        <td class="border p-2">
+<div class="bg-white p-6 rounded shadow mt-8">
 
-                            {{ $record->student->course }}
+    <h2 class="text-2xl font-bold mb-4">
 
-                        </td>
+        Monthly Attendance Report
 
-                        <td class="border p-2">
+    </h2>
 
-                            {{ $record->date }}
+    <table class="w-full border-collapse">
 
-                        </td>
+        <thead>
 
-                        <td class="border p-2">
+            <tr class="bg-gray-200">
 
-                            @if($record->status === 'PRESENT')
+                <th class="border p-2 text-left">
+                    Student Name
+                </th>
 
-                                <span class="bg-green-500 text-white px-3 py-1 rounded">
+                <th class="border p-2 text-left">
+                    Present
+                </th>
 
-                                    PRESENT
+                <th class="border p-2 text-left">
+                    Absent
+                </th>
 
-                                </span>
+                <th class="border p-2 text-left">
+                    Holiday
+                </th>
 
-                            @elseif($record->status === 'ABSENT')
+            </tr>
 
-                                <span class="bg-red-500 text-white px-3 py-1 rounded">
+        </thead>
 
-                                    ABSENT
+        <tbody>
 
-                                </span>
+            @foreach($monthlyReport as $student)
 
-                            @else
+                <tr>
 
-                                <span class="bg-yellow-500 text-white px-3 py-1 rounded">
+                    <td class="border p-2">
+                        {{ $student->name }}
+                    </td>
 
-                                    HOLIDAY
+                    <td class="border p-2">
+                        {{ $student->attendance->where('status','PRESENT')->count() }}
+                    </td>
 
-                                </span>
+                    <td class="border p-2">
+                        {{ $student->attendance->where('status','ABSENT')->count() }}
+                    </td>
 
-                            @endif
+                    <td class="border p-2">
+                        {{ $student->attendance->where('status','HOLIDAY')->count() }}
+                    </td>
 
-                        </td>
+                </tr>
 
-                    </tr>
+            @endforeach
 
-                @empty
+        </tbody>
 
-                    <tr>
+    </table>
 
-                        <td colspan="5"
-                            class="border p-4 text-center">
-
-                            No attendance records found.
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
+</div>
+```
 
 </div>
 
