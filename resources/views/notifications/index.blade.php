@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Notifications</title>
+    <title>Notifications</title>
 
-@vite(['resources/css/app.css'])
-```
+    @vite(['resources/css/app.css'])
 
 </head>
 
 <body class="bg-gray-100 p-10">
 
-```
 <div class="max-w-6xl mx-auto">
 
     <h1 class="text-3xl font-bold mb-6">
@@ -30,63 +26,38 @@
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
 
         <div class="bg-blue-500 text-white p-4 rounded shadow">
-
-            <h3 class="font-semibold">
-                Total
-            </h3>
-
+            <h3 class="font-semibold">Total</h3>
             <p class="text-2xl font-bold">
                 {{ $totalNotifications }}
             </p>
-
         </div>
 
         <div class="bg-green-500 text-white p-4 rounded shadow">
-
-            <h3 class="font-semibold">
-                Email
-            </h3>
-
+            <h3 class="font-semibold">Email</h3>
             <p class="text-2xl font-bold">
                 {{ $emailCount }}
             </p>
-
         </div>
 
         <div class="bg-yellow-500 text-white p-4 rounded shadow">
-
-            <h3 class="font-semibold">
-                SMS
-            </h3>
-
+            <h3 class="font-semibold">SMS</h3>
             <p class="text-2xl font-bold">
                 {{ $smsCount }}
             </p>
-
         </div>
 
         <div class="bg-purple-500 text-white p-4 rounded shadow">
-
-            <h3 class="font-semibold">
-                WhatsApp
-            </h3>
-
+            <h3 class="font-semibold">WhatsApp</h3>
             <p class="text-2xl font-bold">
                 {{ $whatsappCount }}
             </p>
-
         </div>
 
         <div class="bg-red-500 text-white p-4 rounded shadow">
-
-            <h3 class="font-semibold">
-                Failed
-            </h3>
-
+            <h3 class="font-semibold">Failed</h3>
             <p class="text-2xl font-bold">
                 {{ $failedCount }}
             </p>
-
         </div>
 
     </div>
@@ -137,17 +108,9 @@
                         class="w-full border p-2 rounded"
                         required>
 
-                    <option value="EMAIL">
-                        EMAIL
-                    </option>
-
-                    <option value="SMS">
-                        SMS
-                    </option>
-
-                    <option value="WHATSAPP">
-                        WHATSAPP
-                    </option>
+                    <option value="EMAIL">EMAIL</option>
+                    <option value="SMS">SMS</option>
+                    <option value="WHATSAPP">WHATSAPP</option>
 
                 </select>
 
@@ -220,11 +183,17 @@
 
         <form method="GET"
               action="/notifications"
-              class="mb-4">
+              class="mb-4 flex gap-3">
+
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Search recipient or message"
+                class="border p-2 rounded w-80">
 
             <select name="type"
-                    onchange="this.form.submit()"
-                    class="border p-2 rounded">
+                    class="border p-2 rounded w-56">
 
                 <option value="ALL"
                     {{ ($type ?? 'ALL') === 'ALL' ? 'selected' : '' }}>
@@ -248,6 +217,14 @@
 
             </select>
 
+            <button
+                type="submit"
+                class="bg-blue-600 text-white px-4 rounded">
+
+                Search
+
+            </button>
+
         </form>
 
         <table class="w-full border-collapse">
@@ -256,25 +233,12 @@
 
                 <tr class="bg-gray-200">
 
-                    <th class="border p-2">
-                        Recipient
-                    </th>
-
-                    <th class="border p-2">
-                        Type
-                    </th>
-
-                    <th class="border p-2">
-                        Message
-                    </th>
-
-                    <th class="border p-2">
-                        Status
-                    </th>
-
-                    <th class="border p-2">
-                        Sent At
-                    </th>
+                    <th class="border p-2">Recipient</th>
+                    <th class="border p-2">Type</th>
+                    <th class="border p-2">Message</th>
+                    <th class="border p-2">Status</th>
+                    <th class="border p-2">Sent At</th>
+                    <th class="border p-2">Action</th>
 
                 </tr>
 
@@ -287,32 +251,43 @@
                     <tr>
 
                         <td class="border p-2">
-
                             {{ $notification->recipient }}
-
                         </td>
 
                         <td class="border p-2">
-
                             {{ $notification->type }}
-
                         </td>
 
                         <td class="border p-2">
-
                             {{ $notification->message }}
-
                         </td>
 
                         <td class="border p-2">
-
                             {{ $notification->status }}
+                        </td>
 
+                        <td class="border p-2">
+                            {{ $notification->created_at }}
                         </td>
 
                         <td class="border p-2">
 
-                            {{ $notification->created_at }}
+                            <form method="POST"
+                                  action="/notifications/{{ $notification->id }}">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    onclick="return confirm('Delete notification?')"
+                                    class="bg-red-500 text-white px-3 py-1 rounded">
+
+                                    Delete
+
+                                </button>
+
+                            </form>
 
                         </td>
 
@@ -322,7 +297,7 @@
 
                     <tr>
 
-                        <td colspan="5"
+                        <td colspan="6"
                             class="border p-4 text-center">
 
                             No notifications found.
@@ -359,7 +334,6 @@
     );
 
 </script>
-```
 
 </body>
 

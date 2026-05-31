@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Notification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Notification\StoreNotificationRequest;
 use App\Services\Notification\NotificationService;
+use App\Models\Notification;
 
 class NotificationController extends Controller
 {
@@ -22,16 +23,6 @@ class NotificationController extends Controller
     public function store(
         StoreNotificationRequest $request
     ) {
-
-        /*
-        |--------------------------------------------------------------------------
-        | Bulk Notification Support
-        |--------------------------------------------------------------------------
-        |
-        | Example:
-        | abc@gmail.com,xyz@gmail.com,test@gmail.com
-        |
-        */
 
         $recipients = explode(
             ',',
@@ -79,6 +70,21 @@ class NotificationController extends Controller
         return back()->with(
             'success',
             'Bulk notification sent successfully.'
+        );
+    }
+
+    /**
+     * Delete Notification
+     */
+    public function destroy($id)
+    {
+        $notification = Notification::findOrFail($id);
+
+        $notification->delete();
+
+        return back()->with(
+            'success',
+            'Notification deleted successfully.'
         );
     }
 }

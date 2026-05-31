@@ -72,8 +72,28 @@ Route::middleware('auth')->group(function () {
 Route::get('/notifications', function () {
 
     $type = request('type');
+    $search = request('search');
 
     $notifications = Notification::query();
+
+    // Search by recipient or message
+    if ($search) {
+
+        $notifications->where(function ($query) use ($search) {
+
+            $query->where(
+                'recipient',
+                'like',
+                "%{$search}%"
+            )
+            ->orWhere(
+                'message',
+                'like',
+                "%{$search}%"
+            );
+
+        });
+    }
 
     // Filter notifications by type
     if ($type && $type !== 'ALL') {
@@ -89,12 +109,6 @@ Route::get('/notifications', function () {
         ->get();
 
     $templates = NotificationTemplate::all();
-
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard Statistics
-    |--------------------------------------------------------------------------
-    */
 
     $totalNotifications =
         Notification::count();
@@ -129,6 +143,7 @@ Route::get('/notifications', function () {
             'notifications',
             'templates',
             'type',
+            'search',
             'totalNotifications',
             'emailCount',
             'smsCount',
@@ -142,6 +157,11 @@ Route::get('/notifications', function () {
 Route::post(
     '/notifications',
     [NotificationController::class, 'store']
+)->middleware('auth');
+
+Route::delete(
+    '/notifications/{notification}',
+    [NotificationController::class, 'destroy']
 )->middleware('auth');
 
 /*
